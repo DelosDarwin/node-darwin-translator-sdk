@@ -1,7 +1,7 @@
 {
   "name": "darwin-translator-sdk",
   "version": "0.0.1",
-  "description": "NodeJs Translators SDK for Darwin platform",
+  "description": "NodeJs Translator SDK for Darwin platform",
   "main": "index.js",
   "directories": {
     "example": "example",
