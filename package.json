@@ -1,0 +1,24 @@
+{
+  "name": "darwin-translator-sdk",
+  "version": "0.0.1",
+  "description": "NodeJs Translators SDK for Darwin platform",
+  "main": "index.js",
+  "directories": {
+    "example": "example",
+    "lib": "lib"
+  },
+  "dependencies": {
+    "mole-rpc": "0.0.4",
+    "mole-rpc-transport-mqtt": "0.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:DelosDarwin/node-darwin-translator-sdk.git"
+  },
+  "author": "delos",
+  "license": "MIT"
+}
