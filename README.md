@@ -9,9 +9,10 @@ Translator SDK provides you with classes:
 - CoreChannel.
 - ProxyChannel.
 - NLP.
+
 Each class is used to connect translator with corresponding MQTT channel.
 
-#### Methods:
+##### Methods:
 - CoreChannel.
   - init.
   You need to call init method in order to receive messages from core.
@@ -66,6 +67,11 @@ class Translator {
 
         this.translatorId = translatorId;
         this.mqttEndpoint = mqttEndpoint;
+    }
+
+    async start() {
+        await waitForEvent(this.coreMqttClient, 'connect');
+        await waitForEvent(this.proxyMqttClient, 'connect');
 
         this.coreChannel  = new CoreChannel({
             mqttClient : MQTT.connect(this.mqttEndpoint),
@@ -81,11 +87,10 @@ class Translator {
             mqttClient : MQTT.connect(this.mqttEndpoint),
             translatorId
         });
-    }
 
-    async start() {
         await this.coreChannel.init();
         await this.proxyChannel.init();
+
         this.proxyChannel.onMessage(this._requestHandler.bind(this));
     }
 
