@@ -8,8 +8,8 @@
     "lib": "lib"
   },
   "dependencies": {
-    "mole-rpc": "0.0.5",
-    "mole-rpc-transport-mqtt": "0.0.2"
+    "mole-rpc": "0.3.2",
+    "mole-rpc-transport-mqtt": "0.3.0"
   },
   "devDependencies": {},
   "scripts": {
