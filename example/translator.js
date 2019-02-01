@@ -1,10 +1,13 @@
 const TRANSLATOR_ID = process.env.TRANSLATOR_ID || 'TRANSLATOR-12837912739';
 const MQTT_ENTPOINT = process.env.TRANSLATOR_ID || 'tcp://localhost:1883';
 
-const MQTT = require("async-mqtt");
-const CoreChannel = require('../lib/CoreChannel');
-const NLP = require('../lib/NLP');
+const MQTT            = require('async-mqtt');
+const CoreChannel     = require('../lib/CoreChannel');
+const NLP             = require('../lib/NLP');
 // const Configurator = require('../lib/Configurator');
+const Logger          = require('../utils/Logger.js');
+
+const logger = Logger('translator');
 
 async function main() {
     const mqttClient = MQTT.connect(MQTT_ENTPOINT);
@@ -23,16 +26,16 @@ async function main() {
     // CORE COMMUNICATION
     const nva = {noun: 'light1', verb: 'on'};
     const coreResult = await coreChannel.executeNVA({ nva });
-    console.log('coreChannel.executeNVA', coreResult);
+    logger.info('coreChannel.executeNVA', coreResult);
 
     coreChannel.onNVAMessage(({nva}) => {
-        console.log('NVA FROM CORE', nva);
+        logger.info('NVA FROM CORE', nva);
     });
 
 
     // NLP COMMUNICATION
     const nlpResult = await nlp.textToNVA({ text: 'Hello, NLP' });
-    console.log('NLP.textToNVA', nlpResult);
+    logger.info('NLP.textToNVA', nlpResult);
 
 
     // coreChannel.onNVAMessage    (({nva}) => {
@@ -54,4 +57,4 @@ function waitForEvent(emitter, eventName) {
 }
 
 
-main().then(console.log, console.error);
+main().then(logger.info, logger.error);

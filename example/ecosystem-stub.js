@@ -1,11 +1,14 @@
-const MoleClient = require('mole-rpc/MoleClient');
-const MoleServer = require('mole-rpc/MoleServer');
+const MoleClient          = require('mole-rpc/MoleClient');
+const MoleServer          = require('mole-rpc/MoleServer');
 const MQTTTransportClient = require('mole-rpc-transport-mqtt/TransportClient');
 const MQTTTransportServer = require('mole-rpc-transport-mqtt/TransportServer');
-const MQTT = require("async-mqtt");
+const MQTT                = require('async-mqtt');
+const Logger              = require('../utils/Logger.js');
 
 const TRANSLATOR_ID = process.env.TRANSLATOR_ID || 'TRANSLATOR-12837912739';
 const MQTT_ENTPOINT = process.env.TRANSLATOR_ID || 'tcp://localhost:1883';
+
+const logger = Logger('ecosystem-stub');
 
 async function main() {
     await runCore();
@@ -36,7 +39,8 @@ async function runCore() {
     // Messages from translator to core
     coreServer.expose({
         executeNVA(...params) {
-            console.log('executeNVA', params);
+            logger.info('coreServer.expose.executeNVA');
+            logger.debug(params);
             return {id: 'SOME ID HERE'};
         }
     });
@@ -72,7 +76,7 @@ async function runNLP() {
 function inToOut({inTopic}) {
     const [ slash, namespace, from, to] = inTopic.split('\/');
     const outTopic = `/${namespace}/${to}/${from}`; 
-    console.log('inToOut', inTopic, outTopic);
+    logger.info('inToOut', inTopic, outTopic);
     return outTopic;
 }
 
