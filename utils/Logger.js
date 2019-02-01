@@ -43,8 +43,6 @@ function formatObject(param) {
  * Initialize logger
  * @param {String} service - String: name of file/module, where logger should be initialized
  * @param {Number} verbose - Number: deps of logs, which should be printed
- * @param {Array} outputs - Array: array of transports, where log should be printed.
- *                                  Allowed array values: 'Console', 'File', 'Http', 'Stream'
  * @returns {Object} - Object: an instance of logger
  */
 module.exports = function loggerManager(service = '', verbose = process.env.verbose || 2) {
