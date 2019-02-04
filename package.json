@@ -8,6 +8,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "livr": "^2.2.2",
     "mole-rpc": "0.3.2",
     "mole-rpc-transport-mqtt": "0.3.0"
   },
