@@ -1,12 +1,12 @@
 const TRANSLATOR_ID = process.env.TRANSLATOR_ID || 'TRANSLATOR-12837912739';
 const MQTT_ENTPOINT = process.env.TRANSLATOR_ID || 'tcp://localhost:1883';
 
-const MQTT        = require('async-mqtt');
-const CoreChannel = require('../lib/CoreChannel');
-const NLP         = require('../lib/NLP');
-const Logger      = require('../utils/Logger.js');
+const MQTT               = require('async-mqtt');
+const CoreChannel        = require('../lib/CoreChannel');
+const NLP                = require('../lib/NLP');
+const { Logger, LEVELS } = require('../utils/Logger.js');
 
-const logger = Logger('translator', 5);
+const logger = Logger('translator', LEVELS.DEBUG);
 
 async function main() {
     const mqttClient = MQTT.connect(MQTT_ENTPOINT);
