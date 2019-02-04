@@ -56,9 +56,6 @@ const LIVRSchemaExample = {
 
 const setField = (path = [], data, obj = null) => {
     console.log('data', data)
-    const isObjToSetNotNil = Boolean(obj);
-    const isObjToSetObj = typeof obj === 'object' && isObjToSetNotNil;
-    const isObjToSetArray = Array.isArray(obj);
     let objToSet = JSON.parse(JSON.stringify(obj))
 
     const field = path[0]
@@ -141,7 +138,7 @@ exports.validateConfig = (schema, config) => {
     console.log('errors', validator.getErrors())
     console.log('validatedConfig', validatedConfig)
 
-    if (validatedConfig) return validatedConfig
+    if (validatedConfig) return true
 }
 
 exports.saveConfig = (storagePath, config) => {
@@ -150,13 +147,11 @@ exports.saveConfig = (storagePath, config) => {
     const isJson = Boolean(parsedConfig)
     const jsonConfig = isJson ? config : stringify(config)
 
-    console.log('SAVE CONFIG')
-
-    // fs.writeFile(configPath, jsonConfig, 'utf8', (err) => {
-    //     if (err) {
-    //         throw new Error(`Error on save config: ${err}`)
-    //     }
-    //     console.log('The config has been saved!')
-    //     return 'The config has been saved!'
-    // })
+    fs.writeFile(configPath, jsonConfig, 'utf8', (err) => {
+        if (err) {
+            throw new Error(`Error on save config: ${err}`)
+        }
+        console.log('The config has been saved!')
+        return 'The config has been saved!'
+    })
 }
