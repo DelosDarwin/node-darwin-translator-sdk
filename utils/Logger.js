@@ -22,6 +22,7 @@ const COLORS_BY_LEVEL = {
 };
 
 const IS_DEV_MODE         = process.env.MODE === 'development';
+const DEFAULT_LEVEL       = process.env.VERBOSE || LEVELS.INFO;
 let   MAX_LABEL_LENGTH    = 0;
 const MAX_LEVEL_LENGTH    = 7;
 const COLOR_PREFIX_LENGTH = IS_DEV_MODE ? 10 : 0;
@@ -44,21 +45,23 @@ function addSpacesToStart(text) {
 
 function formatObject(param) {
     if (typeof param === 'object') {
-        return IS_DEV_MODE
-            ? `\n${JSON.stringify(param, null, 4)}`
-            : JSON.stringify(param);
+        return JSON.stringify(param);
     }
 
     return param;
 }
 
-const myFormatDev = (service) => printf(({ timestamp: time, level, message }) => {
-    return `${time} [ ${addSpacesToEnd(service.green)} ] ${addSpacesToStart(level[COLORS_BY_LEVEL[level]])}: ${formatObject(message)}`;
-});
+function myFormatDev(service) {
+    return printf(({ timestamp: time, level, message }) => {
+        return `${time} [ ${addSpacesToEnd(service.green)} ] ${addSpacesToStart(level[COLORS_BY_LEVEL[level]])}: ${formatObject(message)}`;
+    });
+}
 
-const myFormatProd = (service) => printf(({ timestamp: time, level, message }) => {
-    return `${time} [ ${addSpacesToEnd(service)} ] ${addSpacesToStart(level)}: ${formatObject(message)}`;
-});
+function myFormatProd(service) {
+    return printf(({ timestamp: time, level, message }) => {
+        return `${time} [ ${addSpacesToEnd(service)} ] ${addSpacesToStart(level)}: ${formatObject(message)}`;
+    });
+}
 
 const myFormat = IS_DEV_MODE ? myFormatDev : myFormatProd;
 
@@ -68,7 +71,7 @@ const myFormat = IS_DEV_MODE ? myFormatDev : myFormatProd;
  * @param {String} level - String: deps of logs, which should be printed
  * @returns {Object} - Object: an instance of logger
  */
-module.exports.Logger = function loggerManager(service = '', level = process.env.verbose || LEVELS.INFO) {
+module.exports.Logger = function loggerManager(service = '', level = DEFAULT_LEVEL) {
     if (MAX_LABEL_LENGTH < service.length) MAX_LABEL_LENGTH = service.length;
 
     const logger = createLogger({
