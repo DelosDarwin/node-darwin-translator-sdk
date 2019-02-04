@@ -65,10 +65,10 @@ const myFormat = IS_DEV_MODE ? myFormatDev : myFormatProd;
 /**
  * Initialize logger
  * @param {String} service - String: name of file/module, where logger should be initialized
- * @param {Number} _level - Number: deps of logs, which should be printed
+ * @param {String} level - String: deps of logs, which should be printed
  * @returns {Object} - Object: an instance of logger
  */
-module.exports.Logger = function loggerManager(service = '', level = process.env.verbose || LEVELS.DEBUG) {
+module.exports.Logger = function loggerManager(service = '', level = process.env.verbose || LEVELS.INFO) {
     if (MAX_LABEL_LENGTH < service.length) MAX_LABEL_LENGTH = service.length;
 
     const logger = createLogger({
