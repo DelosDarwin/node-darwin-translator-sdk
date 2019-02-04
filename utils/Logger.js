@@ -22,7 +22,7 @@ const COLORS_BY_LEVEL = {
 };
 
 const IS_DEV_MODE         = process.env.MODE === 'development';
-let MAX_LABEL_LENGTH      = 0;
+let   MAX_LABEL_LENGTH    = 0;
 const MAX_LEVEL_LENGTH    = 7;
 const COLOR_PREFIX_LENGTH = IS_DEV_MODE ? 10 : 0;
 
