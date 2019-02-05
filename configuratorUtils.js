@@ -16,42 +16,12 @@ const stringify = function stringifyObject(obj) {
     return typeof obj === 'string' ? obj : JSON.stringify(obj);
 };
 
-
-const schemaExample = { fields: [
-    {
-        name: 'ezlo',
-        validation: [ 'required' ],
-        configPath: [ 'ezlo' ]
-    },
-    {
-        name: 'ezlo',
-        label: 'Email for ezlo',
-        type: 'ezlo',
-        validation: [ 'required' ],
-        value: '',
-        disabled: false,
-        placeholder: 'Type email here...',
-        configPath: ['ezlo', 'credentials', 'email']
-    },
-    {
-        name: 'domain',
-        label: 'Ezlo domain',
-        type: 'text',
-        validation: [ 'required', { max_length: 20 }, 'url'],
-        value: '',
-        disabled: false,
-        placeholder: 'Type domain here...',
-        configPath: ['ezlo', 'domain']
-    }
-]}
-
-const LIVRSchemaExample = {
-    ezlo: [ 'required', { 'nested_object': {
-        domain: [ 'required', { max_length: 20 }, 'url'],
-        credentials: [ 'required', { 'nested_object': {
-            email: [ 'required', { max_length: 45 }, 'email' ]
-        }} ]
-    }} ]
+function writeFile(filePath, file) {
+    return new Promise((res, rej) =>
+        fs.writeFile(filePath, file, 'utf8', (err) => {
+            return err ? rej(err) : res();
+        })
+    );
 }
 
 const setField = (path = [], data, obj = null) => {
@@ -76,7 +46,8 @@ const setField = (path = [], data, obj = null) => {
     return objToSet
 }
 
-const getSchemaObject = (schema, pathField, dataField) => {
+
+const getConfigFromSchema = (schema, pathField, dataField) => {
     const fields = schema.fields
     return fields.reduce((schemaResult, field) => {
         const path = field[pathField]
@@ -86,22 +57,6 @@ const getSchemaObject = (schema, pathField, dataField) => {
 }
 
 const getLIVRSchema = (schema = {}) => {
-    console.log(schema)
-    let newSchema = {} // TODO: what if schema is Array
-
-    for (let key in schema) {
-        const schemaValue = schema[key]
-        const isSchemaValueObject = schemaValue && typeof schemaValue === 'object'
-        const isSchemaValueArray = Array.isArray(schemaValue)
-
-        let value = isSchemaValueObject && !isSchemaValueArray ? { nested_object: getLIVRSchema(schemaValue) } : schemaValue
-        newSchema[key] = value
-    }
-
-    return newSchema
-}
-
-const getLIVRSchemaWithRequired = (schema = {}) => {
     let newSchema = null // TODO: what if schema is Array
     let isFieldRequired = false
 
@@ -112,7 +67,7 @@ const getLIVRSchemaWithRequired = (schema = {}) => {
             isFieldRequired = value.includes('required') || isFieldRequired
             newSchema = { ...newSchema, [key]: value }
         } else {
-            const { livrSchema, isDataRequired } = getLIVRSchemaWithRequired(value)
+            const { livrSchema, isDataRequired } = getLIVRSchema(value)
             const livrSchemaToSet = isDataRequired
                 ? { [key]: ["required", { "nested_object": livrSchema } ] }
                 : { [key]: { "nested_object": livrSchema } }
@@ -126,32 +81,22 @@ const getLIVRSchemaWithRequired = (schema = {}) => {
 }
 
 
-exports.validateConfig = (schema, config) => {
+exports.validateConfig = (config, schema, pathField = 'configFieldPath', dataField = 'validation') => {
     const parsedConfig = parse(config) || config
-    const validationSchema = getSchemaObject(schema, 'configPath', 'validation')
-    const { livrSchema } = getLIVRSchemaWithRequired(validationSchema)
-    console.log('LIVRValidationSchema', JSON.stringify(livrSchema))
-    console.log('Config to validate', JSON.stringify(parsedConfig))
+    const validationSchema = getConfigFromSchema(schema, pathField, dataField)
+    const { livrSchema } = getLIVRSchema(validationSchema)
 
     const validator = new LIVR.Validator(livrSchema)
     const validatedConfig = validator.validate(parsedConfig)
-    console.log('errors', validator.getErrors())
-    console.log('validatedConfig', validatedConfig)
 
     if (validatedConfig) return true
 }
 
-exports.saveConfig = (storagePath, config) => {
-    const configPath = path.join(storagePath, 'configTest.json')
+exports.saveConfig = async (config, storagePath = '/etc', configName = 'configTest.json') => {
+    const configPath = path.join(storagePath, configName)
     const parsedConfig = parse(config)
     const isJson = Boolean(parsedConfig)
     const jsonConfig = isJson ? config : stringify(config)
 
-    fs.writeFile(configPath, jsonConfig, 'utf8', (err) => {
-        if (err) {
-            throw new Error(`Error on save config: ${err}`)
-        }
-        console.log('The config has been saved!')
-        return 'The config has been saved!'
-    })
+    return writeFile(configPath, jsonConfig)
 }
