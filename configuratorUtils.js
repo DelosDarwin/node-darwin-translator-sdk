@@ -92,7 +92,7 @@ exports.validateConfig = (config, schema, pathField = 'configFieldPath', dataFie
     if (validatedConfig) return true
 }
 
-exports.saveConfig = async (config, storagePath = '/etc', configName = 'configTest.json') => {
+exports.saveConfig = async (config, storagePath = 'etc/', configName = 'configTest.json') => {
     const configPath = path.join(storagePath, configName)
     const parsedConfig = parse(config)
     const isJson = Boolean(parsedConfig)
