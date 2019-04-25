@@ -8,10 +8,12 @@ npm install darwin-translator-sdk
 Translator SDK provides you with classes:
 - CoreChannel.
 - ProxyChannel.
+- Configurator.
 - NLP.
+
 Each class is used to connect translator with corresponding MQTT channel.
 
-#### Methods:
+##### Methods:
 - CoreChannel.
   - init.
   You need to call init method in order to receive messages from core.
@@ -39,6 +41,9 @@ Each class is used to connect translator with corresponding MQTT channel.
     You need to call init method in order to receive messages from proxy service.
     - onMessage.
     Accepts a function as an argument. This function will be set as message handler.
+- Configurator.
+    - getConfiguratorMethods.
+    Provide configuration methods to expose in channels.
 - NLP.
     - textToNVA.
     Accepts text as an argument. You need to pass text in the following format:
@@ -58,34 +63,51 @@ const MQTT           = require('async-mqtt');
 const ProxyChannel   = require('darwin-translator-sdk/lib/ProxyChannel');
 const NLP            = require('darwin-translator-sdk/lib/NLP');
 const CoreChannel    = require('darwin-translator-sdk/lib/CoreChannel');
+const Configurator   = require('darwin-translator-sdk/lib/Configurator.js');
+
+const utils = require('./utils.js');
 
 class Translator {
-    constructor({ translatorId, mqttEndpoint } = {}) {
+    constructor({ translatorId, mqttEndpoint, translatorConfig, schema } = {}) {
         if (!mqttEndpoint) throw new Error('"mqttEndpoint" required');
         if (!translatorId) throw new Error('"translatorId" required');
 
-        this.translatorId = translatorId;
-        this.mqttEndpoint = mqttEndpoint;
-
-        this.coreChannel  = new CoreChannel({
-            mqttClient : MQTT.connect(this.mqttEndpoint),
-            translatorId
-        });
-
-        this.proxyChannel = new ProxyChannel({
-            mqttClient : MQTT.connect(this.mqttEndpoint),
-            translatorId
-        });
-
-        this.nlp = new NLP({
-            mqttClient : MQTT.connect(this.mqttEndpoint),
-            translatorId
-        });
+        this.translatorId     = translatorId;
+        this.mqttEndpoint     = mqttEndpoint;
+        this.translatorConfig = translatorConfig;
+        this.schema           = schema;
     }
 
     async start() {
+        const coreMqttClient = MQTT.connect(this.mqttEndpoint);
+        const proxyMqttClient = MQTT.connect(this.mqttEndpoint);
+
+        await utils.waitForEvent(coreMqttClient, 'connect');
+        await utils.waitForEvent(proxyMqttClient, 'connect');
+
+        this.configurator = new Configurator({
+            schema: this.schema,
+            config: this.translatorConfig,
+            methods: {
+                saveConfig    : utils.saveConfig,
+                validateConfig: utils.validateConfig
+            }
+        });
+
+        this.coreChannel = new CoreChannel({
+            mqttClient   : coreMqttClient,
+            translatorId : this.translatorId,
+            configurator : this.configurator
+        });
+
+        this.proxyChannel = new ProxyChannel({
+            mqttClient   : proxyMqttClient,
+            translatorId : this.translatorId
+        });
+
         await this.coreChannel.init();
         await this.proxyChannel.init();
+
         this.proxyChannel.onMessage(this._requestHandler.bind(this));
     }
 
