@@ -9,6 +9,7 @@ Translator SDK provides you with classes:
 - CoreChannel.
 - ProxyChannel.
 - Configurator.
+- ListeningChannel
 - NLP.
 
 Each class is used to connect translator with corresponding MQTT channel.
@@ -44,6 +45,9 @@ Each class is used to connect translator with corresponding MQTT channel.
 - Configurator.
     - getConfiguratorMethods.
     Provide configuration methods to expose in channels.
+- ProxyChannel.
+    - init.
+    You need to call init method in order to receive messages from the listening service.
 - NLP.
     - textToNVA.
     Accepts text as an argument. You need to pass text in the following format:
@@ -59,11 +63,12 @@ Each class is used to connect translator with corresponding MQTT channel.
 ### Usage example
 
 ```javascript
-const MQTT           = require('async-mqtt');
-const ProxyChannel   = require('darwin-translator-sdk/lib/ProxyChannel');
-const NLP            = require('darwin-translator-sdk/lib/NLP');
-const CoreChannel    = require('darwin-translator-sdk/lib/CoreChannel');
-const Configurator   = require('darwin-translator-sdk/lib/Configurator.js');
+const MQTT             = require('async-mqtt');
+const ProxyChannel     = require('darwin-translator-sdk/lib/ProxyChannel');
+const NLP              = require('darwin-translator-sdk/lib/NLP');
+const CoreChannel      = require('darwin-translator-sdk/lib/CoreChannel');
+const ListeningChannel = require('darwin-translator-sdk/lib/ListeningChannel');
+const Configurator     = require('darwin-translator-sdk/lib/Configurator.js');
 
 const utils = require('./utils.js');
 
@@ -81,9 +86,11 @@ class Translator {
     async start() {
         const coreMqttClient = MQTT.connect(this.mqttEndpoint);
         const proxyMqttClient = MQTT.connect(this.mqttEndpoint);
+        const listeningMqttClient = MQTT.connect(this.mqttEndpoint);
 
         await utils.waitForEvent(coreMqttClient, 'connect');
         await utils.waitForEvent(proxyMqttClient, 'connect');
+        await utils.waitForEvent(listeningMqttClient, 'connect');
 
         this.configurator = new Configurator({
             schema: this.schema,
@@ -105,8 +112,15 @@ class Translator {
             translatorId : this.translatorId
         });
 
+        this.listeningChannel = new ListeningChannel({
+            mqttClient     : listeningMqttClient,
+            translatorId   : this.translatorId,
+            onNotification : this._handleListeningNotification.bind(this)
+        });
+
         await this.coreChannel.init();
         await this.proxyChannel.init();
+        await this.listeningChannel.init();
 
         this.proxyChannel.onMessage(this._requestHandler.bind(this));
     }
@@ -117,6 +131,10 @@ class Translator {
 
         const nva = await this.nlp.textToNVA({ text: data });
         const coreResponse = await this.coreChannel.executeNVA({ nva });
+    }
+
+    async _handleListeningNotification(message ) {
+        logger.info(`MESSAGE FROM LISTENING SERVICE: ${JSON.stringify(message)}`);
     }
 }
 
