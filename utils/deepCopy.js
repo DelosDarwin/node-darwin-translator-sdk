@@ -1,3 +1,3 @@
-export default function deepCopy(obj) {
+module.exports = function deepCopy(obj) {
    return JSON.parse(JSON.stringify(obj))
 }
