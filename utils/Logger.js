@@ -81,7 +81,15 @@ module.exports.Logger = function loggerManager(service = '', level = DEFAULT_LEV
             timestamp({ format: 'DD/MM HH:mm:ss.SSS' }),
             myFormat(service),
         ),
-        transports : [ new transports.Console() ]
+        transports : [ 
+            new transports.Console(),
+            new transports.File({
+                maxsize: 1024 * 1000 * 5,
+                maxFiles: 2,
+                filename: 'out.log',
+                dirname: './logs'
+            }) 
+        ]
     });
 
     return logger;
