@@ -4,6 +4,7 @@ const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf } = format;
 
 const LEVELS = {
+    SILENT  : 'silent',
     ERROR   : 'error',
     WARN    : 'warn',
     INFO    : 'info',
@@ -21,6 +22,7 @@ const COLORS_BY_LEVEL = {
     [LEVELS.SILLY]   : 'magenta'
 };
 
+const IS_SILENT           = process.env.VERBOSE === 'silent';
 const IS_DEV_MODE         = process.env.MODE === 'development';
 const DEFAULT_LEVEL       = process.env.VERBOSE || LEVELS.INFO;
 let   MAX_LABEL_LENGTH    = 0;
@@ -81,6 +83,7 @@ module.exports.Logger = function loggerManager(service = '', level = DEFAULT_LEV
             timestamp({ format: 'DD/MM HH:mm:ss.SSS' }),
             myFormat(service),
         ),
+        silent     : IS_SILENT,
         transports : [ 
             new transports.Console(),
             new transports.File({
