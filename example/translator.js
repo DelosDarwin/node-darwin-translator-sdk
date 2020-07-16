@@ -4,16 +4,16 @@ const MQTT_ENTPOINT = process.env.TRANSLATOR_ID || 'tcp://localhost:1883';
 const MQTT               = require('async-mqtt');
 const CoreChannel        = require('../lib/CoreChannel');
 const NLP                = require('../lib/NLP');
-const { Logger, LEVELS } = require('../utils/Logger.js');
+const { getLogger, LEVELS } = require('@delos-tech/darwin-logger');
 
-const logger = Logger('translator', LEVELS.DEBUG);
+const logger = getLogger('translator', LEVELS.DEBUG);
 
 async function main() {
     const mqttClient = MQTT.connect(MQTT_ENTPOINT);
     await waitForEvent(mqttClient, 'connect');
 
     const configuration = {
-        mqttClient, 
+        mqttClient,
         translatorId: TRANSLATOR_ID
     };
 
@@ -42,7 +42,7 @@ async function main() {
 function waitForEvent(emitter, eventName) {
     return new Promise((resolve, reject) => {
         emitter.on(eventName, resolve);
-    }); 
+    });
 }
 
 main().then(logger.info, logger.error);
