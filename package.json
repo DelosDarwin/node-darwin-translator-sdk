@@ -1,9 +1,9 @@
 {
   "name": "@delos-tech/translator-sdk",
+  "version": "1.0.1",
   "engines": {
     "node": ">10.0.0 <13.0.0"
   },
-  "version": "1.0.0",
   "description": "NodeJs Translator SDK for Darwin platform",
   "main": "index.js",
   "directories": {
