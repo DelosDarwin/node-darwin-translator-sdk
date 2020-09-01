@@ -1,6 +1,6 @@
 {
   "name": "@delos-tech/translator-sdk",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "engines": {
     "node": ">10.0.0 <13.0.0"
   },
@@ -13,11 +13,9 @@
   "dependencies": {
     "@delos-tech/darwin-logger": "^1.0.1",
     "async-mqtt": "^2.6.1",
-    "eslint-plugin-security": "^1.4.0",
     "livr": "^2.2.2",
     "mole-rpc": "0.3.2",
-    "mole-rpc-transport-mqtt": "0.3.0",
-    "save-dev": "0.0.1-security"
+    "mole-rpc-transport-mqtt": "0.3.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
@@ -33,6 +31,7 @@
     "eslint-plugin-no-require-lodash": "^1.1.0",
     "eslint-plugin-prefer-spread": "^1.0.3",
     "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-security": "^1.4.0",
     "mocha": "^8.0.1",
     "nyc": "^15.1.0"
   },
