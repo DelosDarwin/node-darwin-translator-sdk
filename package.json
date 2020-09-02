@@ -1,6 +1,6 @@
 {
   "name": "@delos-tech/translator-sdk",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "engines": {
     "node": ">10.0.0 <13.0.0"
   },
@@ -13,7 +13,7 @@
   "dependencies": {
     "@delos-tech/darwin-logger": "^1.0.1",
     "async-mqtt": "^2.6.1",
-    "livr": "^2.2.2",
+    "livr": "^2.3.1",
     "mole-rpc": "0.3.2",
     "mole-rpc-transport-mqtt": "0.3.0"
   },
@@ -23,16 +23,16 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
-    "eslint": "^7.4.0",
+    "eslint": "^7.8.1",
     "eslint-config-webbylab": "^5.4.1",
     "eslint-plugin-fetch": "0.0.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-more": "^1.0.0",
     "eslint-plugin-no-require-lodash": "^1.1.0",
     "eslint-plugin-prefer-spread": "^1.0.3",
-    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-security": "^1.4.0",
-    "mocha": "^8.0.1",
+    "mocha": "^8.1.3",
     "nyc": "^15.1.0"
   },
   "scripts": {
