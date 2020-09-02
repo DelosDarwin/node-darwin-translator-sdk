@@ -1,7 +1,16 @@
 ### Installation
 
+Make sure your `.npmrc` is set properly and that you have your `~/.npmrc` set with a valid access token.
+
 ```bash
-npm install darwin-translator-sdk
+> cat .npmrc
+registry=https://npm.pkg.github.com/Delos-tech
+```
+
+Then: 
+
+```bash
+npm install @delos-tech/translator-sdk
 ```
 
 ### Classes
@@ -64,11 +73,11 @@ Each class is used to connect translator with corresponding MQTT channel.
 
 ```javascript
 const MQTT             = require('async-mqtt');
-const ProxyChannel     = require('darwin-translator-sdk/lib/ProxyChannel');
-const NLP              = require('darwin-translator-sdk/lib/NLP');
-const CoreChannel      = require('darwin-translator-sdk/lib/CoreChannel');
-const ListeningChannel = require('darwin-translator-sdk/lib/ListeningChannel');
-const Configurator     = require('darwin-translator-sdk/lib/Configurator.js');
+const ProxyChannel     = require('@delos-tech/translator-sdk/lib/ProxyChannel');
+const NLP              = require('@delos-tech/translator-sdk/lib/NLP');
+const CoreChannel      = require('@delos-tech/translator-sdk/lib/CoreChannel');
+const ListeningChannel = require('@delos-tech/translator-sdk/lib/ListeningChannel');
+const Configurator     = require('@delos-tech/translator-sdk/lib/Configurator.js');
 
 const utils = require('./utils.js');
 

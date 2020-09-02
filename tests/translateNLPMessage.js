@@ -12,15 +12,20 @@ test('Positive: Translate NLP Message #light1 setcolor value=3', async () => {
 });
 
 test('Positive: Translate NLP Message #button2 connect target=office shortpress=power.on shortpress=player.play longpress=power.off longpress=player.pause', async () => {
-    assert.deepEqual(await NLPService.textToNVA({ text: '#button2 connect target=office shortpress=power.on shortpress=player.play longpress=power.off longpress=player.pause' }),
-        [ { 'noun': 'button2', 'verb': 'connect', 'adverb': { 'target': 'office', 'shortpress': [ 'power.on', 'player.play' ], 'longpress': [ 'power.off', 'player.pause' ] } } ]);
+    assert.deepEqual(
+        // eslint-disable-next-line more/no-hardcoded-configuration-data
+        await NLPService.textToNVA({ text: '#button2 connect target=office shortpress=power.on shortpress=player.play longpress=power.off longpress=player.pause' }),
+        [ { 'noun': 'button2', 'verb': 'connect', 'adverb': { 'target': 'office', 'shortpress': [ 'power.on', 'player.play' ], 'longpress': [ 'power.off', 'player.pause' ] } } ]
+    );
 });
 
 test('Positive: Translate NLP Message #light #office tag tags=jim', async () => {
+    // eslint-disable-next-line more/no-hardcoded-configuration-data
     assert.deepEqual(await NLPService.textToNVA({ text: '#light #office tag tags=jim' }), [ { 'noun': 'light.office', 'verb': 'tag', 'adverb': { 'tags': 'jim' } } ]);
 });
 
 test('Positive: Translate NLP Message #light #bedroom on', async () => {
+    // eslint-disable-next-line more/no-hardcoded-configuration-data
     assert.deepEqual(await NLPService.textToNVA({ text: '#light #bedroom on' }), [ { 'noun': 'light.bedroom', 'verb': 'on', 'adverb': {} } ]);
 });
 
